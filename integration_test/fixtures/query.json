@@ -1,14 +1,14 @@
 {
   "AttributesToGet": ["attribute1", "attribute2"],
   "KeyConditions": {
-    "hashkey": {
+    "hash": {
       "AttributeValueList": [{
           "S": "hashkeyvalue"
         }
       ],
       "ComparisonOperator": "EQ"
     },
-    "rangekey": {
+    "range": {
       "AttributeValueList": [{
           "S": "rangekeyvalue"
         }

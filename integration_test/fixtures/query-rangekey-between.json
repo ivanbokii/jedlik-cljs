@@ -1,0 +1,19 @@
+{
+  "KeyConditions": {
+    "hashkey": {
+      "AttributeValueList": [{
+        "S": "hashkeyvalue"
+      }],
+      "ComparisonOperator": "EQ"
+    },
+    "rangekey": {
+      "AttributeValueList": [{
+        "S": "valueFrom"
+      }, {
+        "S": "valueTo"
+      }],
+      "ComparisonOperator": "BETWEEN"
+    }
+  },
+  "TableName": "tablename"
+}
