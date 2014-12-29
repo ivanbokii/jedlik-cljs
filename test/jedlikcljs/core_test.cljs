@@ -52,9 +52,14 @@
       (expect attributes :to.equal ["first" "second" "third"]))
     )
 
-  (it "rangekey-between should save passed values to the _rangekey-between property" []
-    (let [rangekey-between (:_rangekey-between (core/rangekey-between "key" "value from" "value to"))]
-      (expect rangekey-between :to.equal {:key "key" :value-from "value from" :value-to "value to"}))
+  (it "rangekey-between should save passed values to the _rangekey property" []
+    (let [rangekey (:_rangekey (core/rangekey-between "key" "value from" "value to"))]
+      (expect rangekey :to.equal {:key "key" :value-from "value from" :value-to "value to" :comparison "BETWEEN"}))
+    )
+
+  (it "select should save passed values to the _select property" []
+    (let [select (:_select (core/select "COUNT"))]
+      (expect select :to.equal "COUNT"))
     )
 )
 
