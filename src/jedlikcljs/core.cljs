@@ -10,7 +10,7 @@
 (defn- generate-attribute-value-list [key]
   (let [comparison (or (:comparison key) "EQ")
         result {:ComparisonOperator comparison}]
-    (cond 
+    (cond
       (= comparison "BETWEEN") (assoc result :AttributeValueList (generate-value-list (vals (select-keys key [:value-from :value-to]))))
       :else (assoc result :AttributeValueList (generate-value-list [(:value key)])))))
 
@@ -28,10 +28,12 @@
 (defn- key-conditions [result api]
   (let [keys (select-keys api [:_hashkey :_rangekey])
         hashkey (:_hashkey keys)
-        rangekey (:_rangekey keys)]
+        rangekey (:_rangekey keys)
+        result-with-hashkey (assoc result :KeyConditions {(:key hashkey) (generate-attribute-value-list hashkey)})]
 
-    (assoc result :KeyConditions {(:key hashkey) (generate-attribute-value-list hashkey)
-                                  (:key rangekey) (generate-attribute-value-list rangekey)})))
+    (if rangekey
+      (assoc-in result-with-hashkey [:KeyConditions (:key rangekey)] (generate-attribute-value-list rangekey))
+      result-with-hashkey)))
 
 (defn- table-name [result api]
   (assoc result :TableName (:_table api)))
@@ -82,7 +84,7 @@
     (swap! api assoc :_select select)
     @api)
 
-(defn reset 
+(defn reset
   "resets the api"
   []
   (reset! api {:hashkey #(clj->js (apply hashkey %&))

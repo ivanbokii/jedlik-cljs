@@ -1,0 +1,13 @@
+{
+  "KeyConditions": {
+    "hashkey": {
+      "AttributeValueList": [{
+          "S": "hashkeyvalue"
+        }
+      ],
+      "ComparisonOperator": "EQ"
+    }
+  },
+  "TableName": "tablename",
+  "Select": "COUNT"
+}

@@ -34,4 +34,14 @@ describe("integration tests", function() {
 
     expect(query).to.deep.equal(require('./fixtures/query-with-select'));
   });
+
+  it('should return a valid json for query with select no rangekey', function() {
+    var query = new Jedlik()
+          .tablename('tablename')
+          .hashkey('hashkey', 'hashkeyvalue')
+          .select('COUNT')
+          .query();
+
+    expect(query).to.deep.equal(require('./fixtures/query_with_select_no_rangekey'));
+  });
 });
