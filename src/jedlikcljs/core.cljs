@@ -15,20 +15,12 @@
       :else (assoc result :AttributeValueList (generate-value-list [(:value key)])))))
 
 ;; build steps
-(defn- attributes-to-get [result api]
-  (if-let [attributes (:_attributes api)]
-    (assoc result :AttributesToGet attributes)
-    result))
-
-(defn- scan-index-forward [result api]
-  (if (= (:_ascending api) false)
-    (assoc result :ScanIndexForward false)
-    result))
-
-(defn- select-param [result api]
-  (if-let [select (:_select api)]
-    (assoc result :Select select)
-    result))
+(defn- add-from-lookup [name gathered-name]
+  (fn [result api]
+    (let [value (gathered-name api)]
+      (if-not (nil? value)
+        (assoc result name value)
+        result))))
 
 (defn- key-conditions [result api]
   (let [keys (select-keys api [:_hashkey :_rangekey])
@@ -40,14 +32,15 @@
       (assoc-in result-with-hashkey [:KeyConditions (:key rangekey)] (generate-attribute-value-list rangekey))
       result-with-hashkey)))
 
-(defn- table-name [result api]
-  (assoc result :TableName (:_table api)))
-
 ;; builders
 (defn- build-query
   "builds-query based on the api"
   [api]
-  (let [query-steps [attributes-to-get key-conditions table-name scan-index-forward select-param]]
+  (let [query-steps [(add-from-lookup :AttributesToGet :_attributes)
+                     key-conditions
+                     (add-from-lookup :TableName :_table)
+                     (add-from-lookup :ScanIndexForward :_ascending)
+                     (add-from-lookup :Select :_select)]]
     (reduce #(%2 %1 api) {} query-steps)))
 
 ;; public api
