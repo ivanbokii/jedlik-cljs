@@ -20,6 +20,11 @@
     (assoc result :AttributesToGet attributes)
     result))
 
+(defn- scan-index-forward [result api]
+  (if (= (:_ascending api) false)
+    (assoc result :ScanIndexForward false)
+    result))
+
 (defn- select-param [result api]
   (if-let [select (:_select api)]
     (assoc result :Select select)
@@ -42,7 +47,7 @@
 (defn- build-query
   "builds-query based on the api"
   [api]
-  (let [query-steps [attributes-to-get key-conditions table-name select-param]]
+  (let [query-steps [attributes-to-get key-conditions table-name scan-index-forward select-param]]
     (reduce #(%2 %1 api) {} query-steps)))
 
 ;; public api
@@ -84,6 +89,12 @@
     (swap! api assoc :_select select)
     @api)
 
+(defn ascending
+  "A value that specifies ascending (true) or descending (false) traversal of the index."
+  [value]
+    (swap! api assoc :_ascending value)
+    @api)
+
 (defn reset
   "resets the api"
   []
@@ -93,6 +104,7 @@
                :tablename #(clj->js (apply tablename %&))
                :attributes #(clj->js (apply attributes %&))
                :select #(clj->js (apply select %&))
+               :ascending #(clj->js (apply ascending %&))
                :query #(clj->js (apply query %&))}))
 
 ;; public api producers

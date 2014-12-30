@@ -61,6 +61,11 @@
     (let [select (:_select (core/select "COUNT"))]
       (expect select :to.equal "COUNT"))
     )
+
+  (it "ascending should save passed value to the _ascending property" []
+    (let [ascending (:_ascending (core/ascending false))]
+      (expect ascending :to.equal false))
+    )
 )
 
 

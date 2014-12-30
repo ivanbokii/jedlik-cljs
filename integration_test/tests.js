@@ -42,6 +42,18 @@ describe("integration tests", function() {
           .select('COUNT')
           .query();
 
-    expect(query).to.deep.equal(require('./fixtures/query_with_select_no_rangekey'));
+    expect(query).to.deep.equal(require('./fixtures/query-with-select-no-rangekey'));
+  });
+
+  it('should return a valid json for query with descending sort', function() {
+    var query = new Jedlik()
+          .tablename('tablename')
+          .hashkey('hashkey', 'hashkeyvalue')
+          .rangekey('rangekey', 'rangekeyvalue', 'BEGINS_WITH')
+          .attributes(['attribute1', 'attribute2'])
+          .ascending(false)
+          .query();
+
+    expect(query).to.deep.equal(require('./fixtures/query-with-sort-descending'));
   });
 });
