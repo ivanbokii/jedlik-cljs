@@ -56,4 +56,28 @@ describe("integration tests", function() {
 
     expect(query).to.deep.equal(require('./fixtures/query-with-sort-descending'));
   });
+
+  it('should return a valid json for query with start key', function() {
+    var query = new Jedlik()
+          .tablename('tablename')
+          .hashkey('hashkey', 'hashkeyvalue')
+          .rangekey('rangekey', 'rangekeyvalue')
+          .starthashkey('starthashkey', 'starthashkeyvalue')
+          .startrangekey('startrangekey', 'startrangekeyvalue')
+          .attributes(['attribute1', 'attribute2'])
+          .query();
+
+    expect(query).to.deep.equal(require('./fixtures/query-with-startkey'));
+  });
+
+  it('should return a valid json for query with start key (no range key)', function() {
+    var query = new Jedlik()
+          .tablename('tablename')
+          .hashkey('hashkey', 'hashkeyvalue')
+          .starthashkey('starthashkey', 'starthashkeyvalue')
+          .attributes(['attribute1', 'attribute2'])
+          .query();
+
+    expect(query).to.deep.equal(require('./fixtures/query-with-startkey-hash-only'));
+  });
 });

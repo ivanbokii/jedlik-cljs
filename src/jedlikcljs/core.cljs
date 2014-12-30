@@ -14,6 +14,10 @@
       (= comparison "BETWEEN") (assoc result :AttributeValueList (generate-value-list (vals (select-keys key [:value-from :value-to]))))
       :else (assoc result :AttributeValueList (generate-value-list [(:value key)])))))
 
+(defn- generate-attribute [attribute]
+  (when attribute
+    {(:key attribute) {:S (:value attribute)}}))
+
 ;; build steps
 (defn- add-from-lookup [name gathered-name]
   (fn [result api]
@@ -22,6 +26,7 @@
         (assoc result name value)
         result))))
 
+;; TODO refactor thid func; refer to the exclusive key conditions
 (defn- key-conditions [result api]
   (let [keys (select-keys api [:_hashkey :_rangekey])
         hashkey (:_hashkey keys)
@@ -32,12 +37,20 @@
       (assoc-in result-with-hashkey [:KeyConditions (:key rangekey)] (generate-attribute-value-list rangekey))
       result-with-hashkey)))
 
+(defn- exclusive-key-conditions [result api]
+  (if-let [starthashkey (:_starthashkey api)]
+    (let [hashkey (generate-attribute (:_starthashkey api))
+          rangekey (generate-attribute (:_startrangekey api))]
+      (assoc result :ExclusiveStartKey (merge hashkey rangekey)))
+    result))
+
 ;; builders
 (defn- build-query
   "builds-query based on the api"
   [api]
   (let [query-steps [(add-from-lookup :AttributesToGet :_attributes)
                      key-conditions
+                     exclusive-key-conditions
                      (add-from-lookup :TableName :_table)
                      (add-from-lookup :ScanIndexForward :_ascending)
                      (add-from-lookup :Select :_select)]]
@@ -79,14 +92,26 @@
 (defn select
   "The attributes to be returned in the result. You can retrieve all item attributes, specific item attributes, the count of matching items, or in the case of an index, some or all of the attributes projected into the index."
   [select]
-    (swap! api assoc :_select select)
-    @api)
+  (swap! api assoc :_select select)
+  @api)
 
 (defn ascending
   "A value that specifies ascending (true) or descending (false) traversal of the index."
   [value]
-    (swap! api assoc :_ascending value)
-    @api)
+  (swap! api assoc :_ascending value)
+  @api)
+
+(defn starthashkey
+  "The primary key of the first item that this operation will evaluate. Use the value that was returned for LastEvaluatedKey in the previous operation. Hashkey."
+  [key value]
+  (swap! api assoc :_starthashkey {:key key :value value})
+  @api)
+
+(defn startrangekey
+  "The primary key of the first item that this operation will evaluate. Use the value that was returned for LastEvaluatedKey in the previous operation. Rangekey."
+  [key value]
+  (swap! api assoc :_startrangekey {:key key :value value})
+  @api)
 
 (defn reset
   "resets the api"
@@ -98,6 +123,8 @@
                :attributes #(clj->js (apply attributes %&))
                :select #(clj->js (apply select %&))
                :ascending #(clj->js (apply ascending %&))
+               :starthashkey #(clj->js (apply starthashkey %&))
+               :startrangekey #(clj->js (apply startrangekey %&))
                :query #(clj->js (apply query %&))}))
 
 ;; public api producers
