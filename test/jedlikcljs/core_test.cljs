@@ -6,25 +6,25 @@
 
 (nodejs/enable-util-print!)
 
-(describe "private api"
-  (describe "generate-value-list"
-    (it "should generate multiple values for a list with length > 1" []
-      (expect (core/generate-value-list ["first" "second"]) :to.equal [{:S "first"} {:S "second"}]))
+;; (describe "private api"
+;;   (describe "generate-value-list"
+;;     (it "should generate multiple values for a list with length > 1" []
+;;       (expect (core/generate-value-list ["first" "second"]) :to.equal [{:S "first"} {:S "second"}]))
 
-    (it "should generate multiple values for a list with length = 1" []
-      (expect (core/generate-value-list ["first"]) :to.equal [{:S "first"}]))
-    )
+;;     (it "should generate multiple values for a list with length = 1" []
+;;       (expect (core/generate-value-list ["first"]) :to.equal [{:S "first"}]))
+;;     )
 
-  (describe "generate-attribute-value-list"
-    (it "should produce array of values if comparison operator is BETWEEN" []
-      (let [result (core/generate-attribute-value-list {:comparison "BETWEEN" :value-from "from" :value-to "to"})]
-        (expect result :to.equal {:ComparisonOperator "BETWEEN" :AttributeValueList [{:S "from"} {:S "to"}]})))
+;;   (describe "generate-attribute-value-list"
+;;     (it "should produce array of values if comparison operator is BETWEEN" []
+;;       (let [result (core/generate-attribute-value-list {:comparison "BETWEEN" :value-from "from" :value-to "to"})]
+;;         (expect result :to.equal {:ComparisonOperator "BETWEEN" :AttributeValueList [{:S "from"} {:S "to"}]})))
 
-    (it "should produce array of one value if comparison operator is not BETWEEN" []
-      (let [result (core/generate-attribute-value-list {:comparison "EQ" :value "value" :key "key" :type "type"})]
-        (expect result :to.equal {:ComparisonOperator "EQ" :AttributeValueList [{:S "value"}]})))
-    )
-  )
+;;     (it "should produce array of one value if comparison operator is not BETWEEN" []
+;;       (let [result (core/generate-attribute-value-list {:comparison "EQ" :value "value" :key "key" :type "type"})]
+;;         (expect result :to.equal {:ComparisonOperator "EQ" :AttributeValueList [{:S "value"}]})))
+;;     )
+;;   )
 
 (describe "api"
   (it "hashkey should save hashkey params to the _hashkey property" []
