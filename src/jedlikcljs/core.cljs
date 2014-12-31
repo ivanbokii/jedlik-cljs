@@ -109,19 +109,33 @@
   (swap! api assoc :_startrangekey {:key key :value value})
   @api)
 
+(defn attribute
+  "The names of attributes to be modified, the action to perform on each, and the new value for each."
+  [key value action]
+  (swap! api #(update-in % [:_attribute-values] conj {:key key :value value :action action}))
+  @api)
+
 (defn reset
   "resets the api"
   []
-  (reset! api {:hashkey #(clj->js (apply hashkey %&))
+  (reset! api {
+               ; common
+               :hashkey #(clj->js (apply hashkey %&))
                :rangekey #(clj->js (apply rangekey %&))
-               :rangekeyBetween #(clj->js (apply rangekey-between %&))
                :tablename #(clj->js (apply tablename %&))
+
+               ; query
+               :rangekeyBetween #(clj->js (apply rangekey-between %&))
                :attributes #(clj->js (apply attributes %&))
                :select #(clj->js (apply select %&))
                :ascending #(clj->js (apply ascending %&))
                :starthashkey #(clj->js (apply starthashkey %&))
                :startrangekey #(clj->js (apply startrangekey %&))
-               :query #(clj->js (apply query %&))}))
+               :query #(clj->js (apply query %&))
+
+               ;update
+               :attribute #(clj->js (apply attribute %&))
+               }))
 
 ;; public api producers
 (defn query

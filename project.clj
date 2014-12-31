@@ -9,7 +9,7 @@
                  [mocha-latte "0.1.2"]
                  [chai-latte "0.2.0"]]
 
-  :plugins [[lein-cljsbuild "1.0.4-SNAPSHOT"]
+  :plugins [[lein-cljsbuild "1.0.4"]
             [lein-npm "0.4.0"]]
 
   :node-dependencies [[mocha "2.1.0"]
