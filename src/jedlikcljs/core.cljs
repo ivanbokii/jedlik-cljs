@@ -15,6 +15,11 @@
   (when attribute
     {(:key attribute) (generate-value (:value attribute))}))
 
+(defn- generate-attribute-update [attribute]
+  (when attribute
+    {(:key attribute) {:Action (or (:action attribute) "PUT")
+                       :Value (generate-value (:value attribute))}}))
+
 (defn- generate-value [value]
   {:S value})
 
@@ -44,6 +49,10 @@
   (let [key (apply merge (map generate-attribute (vals (select-keys api [:_hashkey :_rangekey]))))]
     (assoc result :Key key)))
 
+(defn- attribute-updates [result api]
+  (let [key (apply merge (map generate-attribute-update (:_attribute-values api)))]
+    (assoc result :AttributeUpdates key)))
+
 ;; builders
 (defn- build-query
   "builds query based on the api"
@@ -59,7 +68,7 @@
 (defn- build-update
   "builds update-query based on the api"
   [api]
-  (let [update-steps [key]]
+  (let [update-steps [attribute-updates key (add-from-lookup :TableName :_table)]]
     (reduce #(%2 %1 api) {} update-steps)))
 
 ;; public api

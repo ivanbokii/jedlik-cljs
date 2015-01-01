@@ -90,7 +90,7 @@ describe("integration tests", function() {
             .hashkey('hashkey', 'hashkeyvalue')
             .rangekey('rangekey', 'rangekeyvalue')
             .attribute('attribute1', 'STR', 'PUT')
-            .attribute('attribute2', 1234)
+            .attribute('attribute2', '1234')
             .update();
 
       expect(update).to.deep.equal(require('./fixtures/update'));
