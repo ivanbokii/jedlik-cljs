@@ -40,9 +40,13 @@
       (assoc result :ExclusiveStartKey (merge hashkey rangekey)))
     result))
 
+(defn- key [result api]
+  (let [key (apply merge (map generate-attribute (vals (select-keys api [:_hashkey :_rangekey]))))]
+    (assoc result :Key key)))
+
 ;; builders
 (defn- build-query
-  "builds-query based on the api"
+  "builds query based on the api"
   [api]
   (let [query-steps [(add-from-lookup :AttributesToGet :_attributes)
                      key-conditions
@@ -51,6 +55,12 @@
                      (add-from-lookup :ScanIndexForward :_ascending)
                      (add-from-lookup :Select :_select)]]
     (reduce #(%2 %1 api) {} query-steps)))
+
+(defn- build-update
+  "builds update-query based on the api"
+  [api]
+  (let [update-steps [key]]
+    (reduce #(%2 %1 api) {} update-steps)))
 
 ;; public api
 (defn hashkey
@@ -135,6 +145,7 @@
 
                ;update
                :attribute #(clj->js (apply attribute %&))
+               :update #(clj->js (update-query %&))
                }))
 
 ;; public api producers
@@ -142,6 +153,13 @@
   "Returns constructed dynamodb query based on the previously saved information "
   []
   (let [result (build-query @api)]
+    (reset)
+    result))
+
+(defn update-query
+  "Returns constructed dynamodb update query based on the previously saved information "
+  []
+  (let [result (build-update @api)]
     (reset)
     result))
 
