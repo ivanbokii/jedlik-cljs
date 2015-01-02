@@ -95,5 +95,29 @@ describe("integration tests", function() {
 
       expect(update).to.deep.equal(require('./fixtures/update'));
     });
+
+    it('should return a valid json for update', function() {
+      var update = new Jedlik()
+            .tablename('tablename')
+            .hashkey('hashkey', 'hashkeyvalue')
+            .attribute('attribute1', 'STR', 'PUT')
+            .attribute('attribute2', '1234')
+            .update();
+
+      expect(update).to.deep.equal(require('./fixtures/update-without-rangekey'));
+    });
+
+    it('should return a valid json for update', function() {
+      var update = new Jedlik()
+            .tablename('tablename')
+            .hashkey('hashkey', 'hashkeyvalue')
+            .rangekey('rangekey', 'rangekeyvalue')
+            .attribute('attribute1', 'STR', 'PUT')
+            .attribute('attribute2', '1234')
+            .returnvals('ALL_OLD')
+            .update();
+
+      expect(update).to.deep.equal(require('./fixtures/update-with-return-values'));
+    });
   });
 });

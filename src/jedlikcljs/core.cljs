@@ -68,7 +68,10 @@
 (defn- build-update
   "builds update-query based on the api"
   [api]
-  (let [update-steps [attribute-updates key (add-from-lookup :TableName :_table)]]
+  (let [update-steps [attribute-updates
+                      key
+                      (add-from-lookup :TableName :_table)
+                      (add-from-lookup :ReturnValues :_returnvals)]]
     (reduce #(%2 %1 api) {} update-steps)))
 
 ;; public api
@@ -128,6 +131,12 @@
   (swap! api assoc :_startrangekey {:key key :value value})
   @api)
 
+(defn returnvals
+  "Use ReturnValues if you want to get the item attributes as they appeared either before or after they were updated."
+  [value]
+  (swap! api assoc :_returnvals value)
+  @api)
+
 (defn attribute
   "The names of attributes to be modified, the action to perform on each, and the new value for each."
   [key value action]
@@ -155,6 +164,7 @@
                ;update
                :attribute #(clj->js (apply attribute %&))
                :update #(clj->js (update-query %&))
+               :returnvals #(clj->js (apply returnvals %&))
                }))
 
 ;; public api producers
