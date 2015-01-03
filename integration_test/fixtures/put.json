@@ -1,0 +1,17 @@
+{
+  "Item": {
+    "hashkey": {
+      "S": "hashkeyvalue"
+    },
+    "rangekey": {
+      "S": "rangekeyvalue"
+    },
+    "attribute1": {
+        "S": "STR"
+    },
+    "attribute2": {
+        "S": "1234"
+    }
+  },
+  "TableName": "tablename"
+}

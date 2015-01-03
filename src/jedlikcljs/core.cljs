@@ -53,6 +53,13 @@
   (let [key (apply merge (map generate-attribute-update (:_attribute-values api)))]
     (assoc result :AttributeUpdates key)))
 
+(defn- item [result api]
+  (let [hashkey (:_hashkey api)
+        rangekey (:_rangekey api)
+        attribute-values (:_attribute-values api)
+        attributes (into [] (concat [hashkey rangekey] attribute-values))]
+    {:Item (apply merge (map generate-attribute attributes))}))
+
 ;; builders
 (defn- build-query
   "builds query based on the api"
@@ -73,6 +80,13 @@
                       (add-from-lookup :TableName :_table)
                       (add-from-lookup :ReturnValues :_returnvals)]]
     (reduce #(%2 %1 api) {} update-steps)))
+
+(defn- build-put
+  "builds put-query based on the api"
+  [api]
+  (let [put-steps [item
+                   (add-from-lookup :TableName :_table)]]
+    (reduce #(%2 %1 api) {} put-steps)))
 
 ;; public api
 (defn hashkey
@@ -147,12 +161,12 @@
   "resets the api"
   []
   (reset! api {
-               ; common
+               ;;common
                :hashkey #(clj->js (apply hashkey %&))
                :rangekey #(clj->js (apply rangekey %&))
                :tablename #(clj->js (apply tablename %&))
 
-               ; query
+               ;;query
                :rangekeyBetween #(clj->js (apply rangekey-between %&))
                :attributes #(clj->js (apply attributes %&))
                :select #(clj->js (apply select %&))
@@ -161,10 +175,13 @@
                :startrangekey #(clj->js (apply startrangekey %&))
                :query #(clj->js (apply query %&))
 
-               ;update
+               ;;update
                :attribute #(clj->js (apply attribute %&))
                :update #(clj->js (update-query %&))
                :returnvals #(clj->js (apply returnvals %&))
+
+               ;;put
+               :put #(clj->js (put-query %&))
                }))
 
 ;; public api producers
@@ -179,6 +196,13 @@
   "Returns constructed dynamodb update query based on the previously saved information "
   []
   (let [result (build-update @api)]
+    (reset)
+    result))
+
+(defn put-query
+  "Returns constructed dynamodb update query based on the previously saved information "
+  []
+  (let [result (build-put @api)]
     (reset)
     result))
 

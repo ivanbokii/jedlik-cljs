@@ -119,5 +119,17 @@ describe("integration tests", function() {
 
       expect(update).to.deep.equal(require('./fixtures/update-with-return-values'));
     });
+
+    it('should return a valid json for put', function() {
+      var put = new Jedlik()
+            .tablename('tablename')
+            .hashkey('hashkey', 'hashkeyvalue')
+            .rangekey('rangekey', 'rangekeyvalue')
+            .attribute('attribute1', 'STR')
+            .attribute('attribute2', '1234')
+            .put();
+
+      expect(put).to.deep.equal(require('./fixtures/put'));
+    });
   });
 });
