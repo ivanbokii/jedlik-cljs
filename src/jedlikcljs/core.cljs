@@ -91,9 +91,9 @@
 (defn- build-delete
   "builds delete-query based on the api"
   [api]
-  (let [put-steps [key
+  (let [delete-steps [key
                    (add-from-lookup :TableName :_table)]]
-    (reduce #(%2 %1 api) {} put-steps)))
+    (reduce #(%2 %1 api) {} delete-steps)))
 
 ;; public api
 (defn hashkey
