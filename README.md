@@ -1,14 +1,12 @@
 # jedlikcljs
 
-A Clojure library designed to ... well, that part is up to you.
+ClojureScript port of [Jedlik](https://github.com/B2MSolutions/jedlik)
 
-## Usage
-
-FIXME
+### How to build and run tests
+1. Get dependencies ``lein desp``
+2. To run tests install mocha globally ``npm install -g mocha``
+3. Build js ``lein cljsbuild once dev``
+4. Run tests ``mocha integration_test/tests.js``
 
 ## License
-
-Copyright © 2014 FIXME
-
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+The MIT License (MIT)
