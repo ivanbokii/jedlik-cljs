@@ -119,7 +119,9 @@ describe("integration tests", function() {
 
       expect(update).to.deep.equal(require('./fixtures/update-with-return-values'));
     });
+  });
 
+  describe('put', function() {
     it('should return a valid json for put', function() {
       var put = new Jedlik()
             .tablename('tablename')
@@ -130,6 +132,31 @@ describe("integration tests", function() {
             .put();
 
       expect(put).to.deep.equal(require('./fixtures/put'));
+    });
+
+    it('should return a valid json for put without rangekey', function() {
+      var fixtureWithoutRangekey = require('./fixtures/put');
+      delete fixtureWithoutRangekey.Item.rangekey;
+
+      var put = new Jedlik()
+            .tablename('tablename')
+            .hashkey('hashkey', 'hashkeyvalue')
+            .attribute('attribute1', 'STR')
+            .attribute('attribute2', '1234')
+            .put();
+      expect(put).to.deep.equal(fixtureWithoutRangekey);
+    });
+  });
+
+  describe('delete', function() {
+    it('should return a valid json for delete', function() {
+      var deleteQuery = new Jedlik()
+            .tablename('tablename')
+            .hashkey('hashkey', 'hashkeyvalue')
+            .rangekey('rangekey', 'rangekeyvalue')
+            .del();
+
+      expect(deleteQuery).to.deep.equal(require('./fixtures/delete'));
     });
   });
 });

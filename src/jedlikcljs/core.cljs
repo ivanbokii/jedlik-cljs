@@ -88,6 +88,13 @@
                    (add-from-lookup :TableName :_table)]]
     (reduce #(%2 %1 api) {} put-steps)))
 
+(defn- build-delete
+  "builds delete-query based on the api"
+  [api]
+  (let [put-steps [key
+                   (add-from-lookup :TableName :_table)]]
+    (reduce #(%2 %1 api) {} put-steps)))
+
 ;; public api
 (defn hashkey
   "Hash key of a request"
@@ -182,6 +189,8 @@
 
                ;;put
                :put #(clj->js (put-query %&))
+               ;;delete
+               :del #(clj->js (delete-query %&))
                }))
 
 ;; public api producers
@@ -200,9 +209,16 @@
     result))
 
 (defn put-query
-  "Returns constructed dynamodb update query based on the previously saved information "
+  "Returns constructed dynamodb put query based on the previously saved information "
   []
   (let [result (build-put @api)]
+    (reset)
+    result))
+
+(defn delete-query
+  "Returns constructed dynamodb delete query based on the previously saved information "
+  []
+  (let [result (build-delete @api)]
     (reset)
     result))
 
